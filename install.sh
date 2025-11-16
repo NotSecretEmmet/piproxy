@@ -7,7 +7,14 @@ sudo apt-get upgrade -y
 
 # Install necessary packages
 echo "Installing required packages..."
-sudo apt-get install -y usb-modeswitch 3proxy
+sudo apt-get install -y usb-modeswitch
+
+echo "Installing 3proxy..."
+cd 3proxy
+ln -s Makefile.Linux Makefile
+make
+sudo make install
+cd ~
 
 # Setup 3proxy
 echo "Setting up 3proxy..."
