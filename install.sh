@@ -2,7 +2,9 @@
 set -euo pipefail
 
 LOG="/var/log/pi-proxy-install.log"
-exec > >(tee -a "$LOG") 2>&1
+sudo touch "$LOG"
+sudo chmod 644 "$LOG"
+exec > >(sudo tee -a "$LOG") 2>&1
 
 echo "Log: $LOG"
 echo "Starting installation..."
@@ -26,11 +28,16 @@ rm "$TMP_DEB"
 
 echo "3proxy installed at: /usr/bin/3proxy"
 
+
 echo "[4] Installing proxy configs..."
 
-sudo install -m 644 ./3proxy.cfg /etc/3proxy.cfg
+sudo mkdir -p /usr/local/3proxy/conf
+sudo mkdir -p /usr/local/3proxy/logs
+
+sudo install -m 644 ./3proxy.cfg /usr/local/3proxy/conf/3proxy.cfg
+
 sudo install -m 755 ./startproxy.sh /usr/local/bin/startproxy
-sudo sed -i 's/\r$//' /usr/local/bin/startproxy   # ensure no CRLF
+sudo sed -i 's/\r$//' /usr/local/bin/startproxy
 
 
 echo "[5] Installing udev rules..."
@@ -49,7 +56,7 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/startproxy
+ExecStart=/usr/bin/3proxy /usr/local/3proxy/conf/3proxy.cfg
 Restart=always
 RestartSec=5
 
@@ -68,4 +75,5 @@ sudo usb_modeswitch -v 3566 -p 2001 -X || \
 
 echo "=== Installation Complete ==="
 echo "Start proxy now with: sudo systemctl start 3proxy"
+echo "View logs: sudo journalctl -u 3proxy -f"
 echo "Reboot recommended."
