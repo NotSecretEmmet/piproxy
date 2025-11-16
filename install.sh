@@ -15,7 +15,7 @@ cd 3proxy
 ln -s Makefile.Linux Makefile
 make
 sudo make install
-cd ~
+cd ..
 sleep 2
 
 # Setup 3proxy
