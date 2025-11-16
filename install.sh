@@ -1,47 +1,86 @@
 #!/bin/bash
+set -euo pipefail
 
-# Update and upgrade system packages
-echo "Updating system..."
+LOG="/var/log/pi-proxy-install.log"
+exec > >(tee -a "$LOG") 2>&1
+
+echo "Log: $LOG"
+echo "Starting installation..."
+
+
+echo "[1] Updating package list..."
 sudo apt-get update -y
-sudo apt-get upgrade -y
 
-# Install necessary packages
-echo "Installing required packages..."
-sudo apt-get install -y usb-modeswitch
 
-echo "Installing 3proxy..."
-git clone https://github.com/z3apa3a/3proxy
-cd 3proxy
-ln -s Makefile.Linux Makefile
-make
-sudo make install
-cd ..
-sleep 2
+echo "[2] Installing required packages..."
+sudo apt-get install -y usb-modeswitch curl udev
 
-# Setup 3proxy
-echo "Setting up 3proxy..."
-sudo cp ./3proxy.cfg /home/pi/3proxy.cfg
-sudo chmod +x /home/pi/3proxy.cfg
 
-# Setup the startproxy.sh script
-echo "Creating startup script..."
-sudo cp ./startproxy.sh /home/pi/startproxy.sh
-sudo chmod +x /home/pi/startproxy.sh
+USE_PREBUILT=true
 
-# Configure udev rules for Huawei dongle
-echo "Setting up udev rules..."
-sudo cp ./40-huawei.rules /etc/udev/rules.d/40-huawei.rules
+if $USE_PREBUILT; then
+  echo "[3] Installing prebuilt 3proxy..."
 
-# Add startup to rc.local
-echo "Adding startup commands to /etc/rc.local..."
-sudo cp ./rc.local /etc/rc.local
-sudo chmod +x /etc/rc.local
+  sudo mkdir -p /usr/local/3proxy
+  sudo curl -L -o /usr/local/3proxy/3proxy \
+    https://raw.githubusercontent.com/z3apa3a/3proxy/master/bin/3proxy
 
-sudo usb_modeswitch -v 3566 -p 2001 -X
+  sudo chmod +x /usr/local/3proxy/3proxy
 
-sleep 2
-# Reload udev rules
+else
+  echo "[3] Compiling 3proxy from source (slow)..."
+
+  sudo apt-get install -y build-essential
+
+  git clone https://github.com/z3apa3a/3proxy || true
+  cd 3proxy
+  ln -sf Makefile.Linux Makefile
+  make -j$(nproc)
+  sudo make install
+  cd ..
+fi
+
+
+echo "[4] Installing proxy configs..."
+
+sudo install -m 644 ./3proxy.cfg /etc/3proxy.cfg
+sudo install -m 755 ./startproxy.sh /usr/local/bin/startproxy
+sudo sed -i 's/\r$//' /usr/local/bin/startproxy   # ensure no CRLF
+
+
+echo "[5] Installing udev rules..."
+
+sudo install -m 644 ./40-huawei.rules /etc/udev/rules.d/40-huawei.rules
 sudo udevadm control --reload-rules
 
-# Success message
-echo "Installation complete! Reboot system."
+
+echo "[6] Creating systemd service..."
+
+sudo tee /etc/systemd/system/3proxy.service >/dev/null <<EOF
+[Unit]
+Description=3Proxy Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/startproxy
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable 3proxy.service
+
+
+echo "[7] Applying usb_modeswitch for Huawei (3566:2001)..."
+sudo usb_modeswitch -v 3566 -p 2001 -X || \
+  echo "Modeswitch may already be applied or handled by udev."
+
+
+echo "=== Installation Complete ==="
+echo "Start proxy now with: sudo systemctl start 3proxy"
+echo "Reboot recommended."
