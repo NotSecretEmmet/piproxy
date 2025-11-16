@@ -16,6 +16,7 @@ ln -s Makefile.Linux Makefile
 make
 sudo make install
 cd ~
+sleep 2
 
 # Setup 3proxy
 echo "Setting up 3proxy..."
@@ -36,6 +37,9 @@ echo "Adding startup commands to /etc/rc.local..."
 sudo cp ./rc.local /etc/rc.local
 sudo chmod +x /etc/rc.local
 
+sudo usb_modeswitch -v 3566 -p 2001 -X
+
+sleep 2
 # Reload udev rules
 sudo udevadm control --reload-rules
 
