@@ -19,26 +19,25 @@ cd ~
 
 # Setup 3proxy
 echo "Setting up 3proxy..."
-sudo cp 3proxy.cfg /home/pi/3proxy.cfg
+sudo cp ./3proxy.cfg /home/pi/3proxy.cfg
 sudo chmod +x /home/pi/3proxy.cfg
 
 # Setup the startproxy.sh script
 echo "Creating startup script..."
-sudo cp startproxy.sh /home/pi/startproxy.sh
+sudo cp ./startproxy.sh /home/pi/startproxy.sh
 sudo chmod +x /home/pi/startproxy.sh
 
 # Configure udev rules for Huawei dongle
 echo "Setting up udev rules..."
-sudo cp 40-huawei.rules /etc/udev/rules.d/40-huawei.rules
+sudo cp ./40-huawei.rules /etc/udev/rules.d/40-huawei.rules
 
 # Add startup to rc.local
 echo "Adding startup commands to /etc/rc.local..."
-sudo cp rc.local /etc/rc.local
+sudo cp ./rc.local /etc/rc.local
 sudo chmod +x /etc/rc.local
 
 # Reload udev rules
 sudo udevadm control --reload-rules
 
 # Success message
-echo "Installation complete! Rebooting system."
-sudo reboot -h
+echo "Installation complete! Reboot system."
