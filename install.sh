@@ -13,33 +13,18 @@ sudo apt-get update -y
 
 
 echo "[2] Installing required packages..."
-sudo apt-get install -y usb-modeswitch curl udev
+sudo apt-get install -y usb-modeswitch curl wget udev
 
 
-USE_PREBUILT=true
+echo "[3] Installing 3proxy (official ARM64 Debian package)..."
 
-if $USE_PREBUILT; then
-  echo "[3] Installing prebuilt 3proxy..."
+TMP_DEB="/tmp/3proxy.deb"
+wget -q https://github.com/3proxy/3proxy/releases/download/0.9.5/3proxy-0.9.5.aarch64.deb -O "$TMP_DEB"
 
-  sudo mkdir -p /usr/local/3proxy
-  sudo curl -L -o /usr/local/3proxy/3proxy \
-    https://raw.githubusercontent.com/z3apa3a/3proxy/master/bin/3proxy
+sudo apt-get install -y "$TMP_DEB"
+rm "$TMP_DEB"
 
-  sudo chmod +x /usr/local/3proxy/3proxy
-
-else
-  echo "[3] Compiling 3proxy from source (slow)..."
-
-  sudo apt-get install -y build-essential
-
-  git clone https://github.com/z3apa3a/3proxy || true
-  cd 3proxy
-  ln -sf Makefile.Linux Makefile
-  make -j$(nproc)
-  sudo make install
-  cd ..
-fi
-
+echo "3proxy installed at: /usr/bin/3proxy"
 
 echo "[4] Installing proxy configs..."
 
