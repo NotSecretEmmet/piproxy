@@ -10,6 +10,7 @@ echo "Installing required packages..."
 sudo apt-get install -y usb-modeswitch
 
 echo "Installing 3proxy..."
+git clone https://github.com/z3apa3a/3proxy
 cd 3proxy
 ln -s Makefile.Linux Makefile
 make
@@ -18,8 +19,8 @@ cd ~
 
 # Setup 3proxy
 echo "Setting up 3proxy..."
-sudo cp 3proxy.cfg /usr/local/bin/3proxy.cfg
-sudo chmod +x /usr/local/bin/3proxy.cfg
+sudo cp 3proxy.cfg /home/pi/3proxy.cfg
+sudo chmod +x /home/pi/3proxy.cfg
 
 # Setup the startproxy.sh script
 echo "Creating startup script..."
