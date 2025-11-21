@@ -1,6 +1,0 @@
-#!/bin/bash
-# rc.local
-# Add the following to run startproxy.sh on boot
-
-sudo bash /home/pi/startproxy.sh &
-

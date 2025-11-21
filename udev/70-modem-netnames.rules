@@ -1,0 +1,2 @@
+SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="5a:fb:bb:fd:05:72", NAME="modem0"
+SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="e2:e4:50:13:d8:1d", NAME="modem1"
