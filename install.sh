@@ -47,4 +47,31 @@ cudo usb_modeswitch -v 3566 -p 2001 -X
 
 sudo udevadm control --reload-rules
 
+echo "Setting up Python environment..."
+sudo apt-get install -y python3 python3-pip python3-venv python3-full
+
+# Create virtual environment
+python3 -m venv /home/pi/pienv
+
+# Install required packages inside venv
+/home/pi/pienv/bin/pip install huawei_lte_api rich requests
+
+echo "Installing simple startup service..."
+sudo bash -c 'cat >/etc/systemd/system/piproxy-start.service' << 'EOF'
+[Unit]
+Description=PiProxy Startup Script
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /home/pi/startproxy.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable piproxy-start.service
+
 echo "Installation complete! Reboot system."
