@@ -56,6 +56,16 @@ python3 -m venv /home/pi/pienv
 # Install required packages inside venv
 /home/pi/pienv/bin/pip install huawei_lte_api rich requests
 
+# Make Python scripts venv-aware and executable
+for script in reset_ip.py modem_status.py; do
+    # Insert venv activation at the top
+    sed -i "1i\
+import sys\nimport os\nVENV_PATH='$VENV_DIR'\nif sys.prefix != VENV_PATH:\n    activate_this = os.path.join(VENV_PATH, 'bin', 'activate_this.py')\n    if os.path.exists(activate_this):\n        with open(activate_this) as f: exec(f.read(), dict(__file__=activate_this))\n" $BASE_DIR/$script
+
+    # Make executable
+    chmod +x $BASE_DIR/$script
+done
+
 echo "Installing simple startup service..."
 sudo bash -c 'cat >/etc/systemd/system/piproxy-start.service' << 'EOF'
 [Unit]
