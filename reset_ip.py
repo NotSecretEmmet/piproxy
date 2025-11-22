@@ -1,13 +1,21 @@
-#!/usr/bin/env python3
-import subprocess
-import time
+#!/home/pi/pienv/bin/python
 import argparse
-import requests
-from rich import print
+import os
+import subprocess
+import sys
+import time
 
+import requests
 from huawei_lte_api.Client import Client
 from huawei_lte_api.Connection import Connection
 from huawei_lte_api.enums.net import LTEBandEnum, NetworkBandEnum, NetworkModeEnum
+from rich import print
+
+venv_path = "/home/pi/pienv"
+if sys.prefix != venv_path:
+    activate_this = os.path.join(venv_path, "bin/activate_this.py")
+    with open(activate_this) as f:
+        exec(f.read(), {"__file__": activate_this})
 
 
 def get_gateway_from_iface(iface: str) -> str:

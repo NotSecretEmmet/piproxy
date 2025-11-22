@@ -6,7 +6,17 @@ from rich import print
 from huawei_lte_api.Client import Client
 from huawei_lte_api.Connection import Connection
 
-NETWORK_TYPES = {
+import sys
+import os
+
+venv_path = "/home/pi/pienv"
+if sys.prefix != venv_path:
+    activate_this = os.path.join(venv_path, "bin/activate_this.py")
+    with open(activate_this) as f:
+        exec(f.read(), {"__file__": activate_this})
+
+
+NETWORK_TYPES: dict[str, str] = {
     "0": "Invalid",
     "1": "GSM",
     "2": "GPRS",
@@ -27,7 +37,7 @@ NETWORK_TYPES = {
     "17": "HSPA+ 64QAM",
     "18": "HSPA+ MIMO",
     "19": "LTE",
-    "101": "LTE",  # many E3372 firmwares use this
+    "101": "LTE",
 }
 
 
