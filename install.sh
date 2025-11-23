@@ -56,6 +56,10 @@ python3 -m venv /home/pi/pienv
 # Install required packages inside venv
 /home/pi/pienv/bin/pip install huawei_lte_api rich requests
 
+# Set paths
+BASE_DIR="/home/pi/piproxy"
+VENV_DIR="/home/pi/pienv"
+
 # Make Python scripts venv-aware and executable
 for script in reset_ip.py modem_status.py; do
     # Insert venv activation at the top
