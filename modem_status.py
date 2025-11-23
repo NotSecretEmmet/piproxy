@@ -1,13 +1,12 @@
-#!/home/pi/pienv/bin/python
+#!/usr/bin/env python3
 import argparse
+import os
 import subprocess
-from rich import print
+import sys
 
 from huawei_lte_api.Client import Client
 from huawei_lte_api.Connection import Connection
-
-import sys
-import os
+from rich import print
 
 venv_path = "/home/pi/pienv"
 if sys.prefix != venv_path:
