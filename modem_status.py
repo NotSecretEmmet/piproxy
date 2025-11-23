@@ -1,4 +1,4 @@
-#!/home/pi/pienv/bin/python
+#!/usr/bin/env python3
 import argparse
 import subprocess
 from rich import print
@@ -6,14 +6,14 @@ from rich import print
 from huawei_lte_api.Client import Client
 from huawei_lte_api.Connection import Connection
 
-import sys
-import os
+# import sys
+# import os
 
-venv_path = "/home/pi/pienv"
-if sys.prefix != venv_path:
-    activate_this = os.path.join(venv_path, "bin/activate_this.py")
-    with open(activate_this) as f:
-        exec(f.read(), {"__file__": activate_this})
+# venv_path = "/home/pi/pienv"
+# if sys.prefix != venv_path:
+#     activate_this = os.path.join(venv_path, "bin/activate_this.py")
+#     with open(activate_this) as f:
+#         exec(f.read(), {"__file__": activate_this})
 
 
 NETWORK_TYPES: dict[str, str] = {

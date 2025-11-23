@@ -1,3 +1,4 @@
 #!/bin/bash
 echo "Starting 3proxy..."
-sudo 3proxy /home/pi/3proxy.cfg
+/usr/bin/3proxy /home/pi/piproxy/3proxy.cfg
+
